@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Codes Light - La Promenade Villeverte</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 40px 20px;
+            background: #588A57;
+            min-height: 100vh;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            margin-top: 0;
+        }
+        .title-line {
+            width: 300px;
+            height: 4px;
+            background: #2E5CB8;
+            margin: 0 auto 40px;
+            border-radius: 2px;
+        }
+        .container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        .qr-card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+        .restaurant-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-top: 15px;
+            margin-bottom: 0;
+        }
+        .qr-display {
+            border: 8px solid #588A57;
+            border-radius: 15px;
+            padding: 15px;
+            display: inline-block;
+            background: white;
+        }
+        .qr-container {
+            position: relative;
+            display: inline-block;
+            width: 220px;
+            height: 220px;
+        }
+        .qr-code-wrapper {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .logo-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            background: white;
+            border: 3px solid #588A57;
+            border-radius: 10px;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 20px rgba(255,255,255,0.95);
+            z-index: 10;
+        }
+        .logo-img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        @media (max-width: 1400px) {
+            .container {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        @media (max-width: 900px) {
+            .container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (max-width: 600px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="container"></div>
+
+    <script>
+        const restaurants = [
+            {
+                name: "Baggli",
+                url: "https://lapromenadevilleverte.ma/accueil/enseignes/cafes-restaurants/baggli/?utm_source=qrsticker&utm_medium=offline&utm_campaign=restaurant",
+                logo: "https://lapromenadevilleverte.ma/wp-content/uploads/2023/12/baggli-1.png"
+            },
+            {
+                name: "Celebritea",
+                url: "https://lapromenadevilleverte.ma/accueil/enseignes/cafes-restaurants/celebritea/?utm_source=qrsticker&utm_medium=offline&utm_campaign=restaurant",
+                logo: "https://lapromenadevilleverte.ma/wp-content/uploads/2024/05/celbritea-logo-150x150.png"
+            },
+            {
+                name: "Chikpeas",
+                url: "https://lapromenadevilleverte.ma/accueil/enseignes/cafes-restaurants/chikpeas/?utm_source=qrsticker&utm_medium=offline&utm_campaign=restaurant",
+                logo: "https://lapromenadevilleverte.ma/wp-content/uploads/2024/04/PROMENADE-LOGOS1.png"
+            },
+            {
+                name: "Joël Robuchon",
+                url: "https://lapromenadevilleverte.ma/accueil/enseignes/cafes-restaurants/joel-robuchon/?utm_source=qrsticker&utm_medium=offline&utm_campaign=restaurant",
+                logo: "https://lapromenadevilleverte.ma/wp-content/uploads/2023/12/Robuchon-5.png"
+            },
+            {
+                name: "Limone del Garda",
+                url: "https://lapromenadevilleverte.ma/accueil/enseignes/cafes-restaurants/limone-del-garda/?utm_source=qrsticker&utm_medium=offline&utm_campaign=restaurant",
+                logo: "https://lapromenadevilleverte.ma/wp-content/uploads/2024/05/7.png"
+            },
+            {
+                name: "Paul",
+                url: "https://lapromenadevilleverte.ma/accueil/enseignes/cafes-restaurants/paul/?utm_source=qrsticker&utm_medium=offline&utm_campaign=restaurant",
+                logo: "https://lapromenadevilleverte.ma/wp-content/uploads/2023/12/Paul-5.png"
+            },
+            {
+                name: "Tobiko",
+                url: "https://lapromenadevilleverte.ma/accueil/enseignes/cafes-restaurants/tobiko/?utm_source=qrsticker&utm_medium=offline&utm_campaign=restaurant",
+                logo: "https://lapromenadevilleverte.ma/wp-content/uploads/2023/12/tobiko-6.png"
+            }
+        ];
+
+        function generateQRCodes() {
+            const container = document.getElementById('container');
+            
+            restaurants.forEach((restaurant, index) => {
+                const card = document.createElement('div');
+                card.className = 'qr-card';
+                
+                const qrDisplay = document.createElement('div');
+                qrDisplay.className = 'qr-display';
+                
+                const qrContainer = document.createElement('div');
+                qrContainer.className = 'qr-container';
+                qrContainer.id = 'qr-container-' + index;
+                
+                const qrCodeWrapper = document.createElement('div');
+                qrCodeWrapper.className = 'qr-code-wrapper';
+                
+                const logoOverlay = document.createElement('div');
+                logoOverlay.className = 'logo-overlay';
+                logoOverlay.id = 'logo-overlay-' + index;
+                
+                const logoImg = document.createElement('img');
+                logoImg.className = 'logo-img';
+                logoImg.src = restaurant.logo;
+                logoImg.onerror = function() {
+                    this.style.display = 'none';
+                };
+                
+                logoOverlay.appendChild(logoImg);
+                qrContainer.appendChild(qrCodeWrapper);
+                qrContainer.appendChild(logoOverlay);
+                qrDisplay.appendChild(qrContainer);
+                card.appendChild(qrDisplay);
+                
+                // Ajouter le nom du restaurant
+                const name = document.createElement('h3');
+                name.className = 'restaurant-name';
+                name.textContent = restaurant.name;
+                card.appendChild(name);
+                
+                container.appendChild(card);
+                
+                // Générer le QR code
+                new QRCode(document.getElementById('qr-container-' + index), {
+                    text: restaurant.url,
+                    width: 220,
+                    height: 220,
+                    colorDark: '#000000',
+                    colorLight: '#ffffff',
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+            });
+        }
+
+        generateQRCodes();
+    </script>
+</body>
+</html>
